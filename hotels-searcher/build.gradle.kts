@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.jpa") version "1.9.20"
 }
 
-group = "com.hotels.search"
+group = "com.hotels.searcher"
 version = "1.0.0"
 
 java {
@@ -21,10 +21,8 @@ repositories {
 dependencies {
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-data-opensearch")
     implementation("org.opensearch.client:opensearch-java:2.10.0")
     implementation("org.opensearch.client:opensearch-rest-client:2.19.1")
 

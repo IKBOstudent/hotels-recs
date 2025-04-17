@@ -1,6 +1,7 @@
 package service
 
-import dto.HotelsSearchReq
+import com.hotels.searcher.dto.HotelsSearchReq
+import com.hotels.searcher.service.HotelSearchService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
