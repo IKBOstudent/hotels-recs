@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hotels-api
+  namespace: micro-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hotels-api
+  template:
+    metadata:
+      labels:
+        app: hotels-api
+    spec:
+      containers:
+      - name: hotels-api
+        image: cr.yandex/hotels-recs/hotels-api:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod"
+        - name: HOTELS_ORDERS_URL
+          value: "http://hotels-orders:8080"
+        - name: HOTELS_SEARCHER_URL
+          value: "http://hotels-searcher:8080"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10

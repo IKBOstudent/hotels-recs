@@ -8,3 +8,9 @@ management:
     web:
       exposure:
         include: health
+
+microservice:
+  hotels-orders:
+    url: ${HOTELS_ORDERS_URL:http://localhost:8081}
+  hotels-searcher:
+    url: ${HOTELS_SEARCHER_URL:http://localhost:8082}

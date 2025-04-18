@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hotels-searcher
+  namespace: micro-app
+spec:
+  selector:
+    app: hotels-searcher
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP

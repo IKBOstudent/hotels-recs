@@ -10,4 +10,5 @@ management:
         include: health
 
 opensearch:
-  host: "158.160.56.71"
+  host: ${OPENSEARCH_HOST}
+  port: ${OPENSEARCH_PORT}
