@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: hotels-searcher
-        image: cr.yandex/hotels-recs/hotels-searcher:latest
+        image: cr.yandex/common/hotels-searcher:latest
         ports:
         - containerPort: 8080
         env:

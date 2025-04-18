@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: hotels-api
-        image: cr.yandex/hotels-recs/hotels-api:latest
+        image: cr.yandex/common/hotels-api:latest
         ports:
         - containerPort: 8080
         env:

@@ -1,0 +1,84 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Yandex Cloud Auth
+        uses: yc-actions/yc-cr-login@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
+      
+      - name: Build and push hotels-api
+        uses: docker/build-push-action@v4
+        with:
+          context: ./hotels-api
+          push: true
+          tags: cr.yandex/common/hotels-api:latest
+      
+      - name: Build and push hotels-orders
+        uses: docker/build-push-action@v4
+        with:
+          context: ./hotels-orders
+          push: true
+          tags: cr.yandex/common/hotels-orders:latest
+
+      - name: Build and push hotels-searcher
+        uses: docker/build-push-action@v4
+        with:
+          context: ./hotels-searcher
+          push: true
+          tags: cr.yandex/common/hotels-searcher:latest
+      
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+      
+      - name: Configure Kubernetes Cluster
+        uses: yc-actions/yc-k8s-auth@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
+          kube-config-path: kubeconfig
+          yc-folder-id: ${{ secrets.YC_FOLDER_ID }}
+          yc-k8s-cluster-id: ${{ secrets.YC_K8S_CLUSTER_ID }}
+      
+      # Применение конфигурации Kubernetes
+      - name: Apply K8s configuration
+        run: |
+          kubectl apply -f k8s/namespace.yaml
+          
+          # Создаем секрет вручную из переменных GitHub
+          kubectl create secret generic db-credentials \
+            --namespace=micro-app \
+            --from-literal=postgres-user=${{ secrets.DB_USER }} \
+            --from-literal=postgres-password=${{ secrets.DB_PASSWORD }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+          
+          kubectl apply -f k8s/databases/postgres/
+          kubectl apply -f k8s/databases/opensearch/
+          kubectl apply -f k8s/hotels-api/
+          kubectl apply -f k8s/hotels-orders/
+          kubectl apply -f k8s/hotels-searcher/
+          kubectl apply -f k8s/ingress.yaml
+
+      - name: Verify Deployment
+        run: |
+          export KUBECONFIG=kubeconfig
+          
+          echo "Waiting for deployments to be ready..."
+          kubectl wait --namespace=micro-app --for=condition=available deployments --all --timeout=5m
+          
+          echo "Checking statefulsets rollout status..."
+          kubectl rollout status statefulset/postgres --namespace=micro-app --timeout=5m
+          kubectl rollout status statefulset/opensearch --namespace=micro-app --timeout=5m
+          
+          echo "Deployment verification complete!"
