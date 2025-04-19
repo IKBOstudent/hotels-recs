@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import kotlin.IllegalArgumentException
 
 @Service
 class PaymentService(
@@ -21,7 +22,7 @@ class PaymentService(
                 .orElseThrow { EntityNotFoundException("Booking not found with id: $bookingId") }
 
         if (booking.status != Booking.Status.PENDING) {
-            throw IllegalStateException("Booking is not in PENDING state, current state: ${booking.status}")
+            throw IllegalArgumentException("Booking is not in PENDING state, current state: ${booking.status}")
         }
 
         Thread.sleep(2000) // emulate payment processing
