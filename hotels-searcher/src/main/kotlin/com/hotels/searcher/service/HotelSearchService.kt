@@ -29,9 +29,9 @@ class HotelSearchService(
                 .query(request.queryString)
                 .fields(
                     listOf(
+                        "city^3",
                         "description^2",
                         "aspects^1",
-                        "city^3",
                         "address^1",
                     ),
                 ).type(TextQueryType.BestFields)

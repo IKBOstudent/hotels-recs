@@ -9,9 +9,9 @@ services:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
-      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=testpassword
     ports:
       - 9200:9200
+      - 9300:9300
     volumes:
       - opensearch-data:/usr/share/opensearch/data
     networks:
@@ -34,7 +34,10 @@ services:
       dockerfile: Dockerfile
     container_name: springboot-app
     ports:
-      - "8080:8080"
+      - 8080:8080
+    environment:
+      - OPENSEARCH_HOST=opensearch-node
+      - OPENSEARCH_PORT=9200
     networks:
       - opensearch-net
 
