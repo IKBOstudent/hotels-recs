@@ -19,6 +19,7 @@ services:
 
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:2.11.0
+    container_name: opensearch-dashboards
     ports:
       - 5601:5601
     expose:
@@ -28,11 +29,11 @@ services:
     networks:
       - opensearch-net
 
-  springboot-app:
+  hotels-searcher:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: springboot-app
+    container_name: hotels-searcher
     ports:
       - 8082:8080
     environment:
