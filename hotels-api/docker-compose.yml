@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  hotels-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hotels-api
+    ports:
+      - 8080:8080
+    environment:
+      - HOTELS_ORDERS_URL=http://localhost:8081
+      - HOTELS_SEARCHER_URL=http://localhost:8082
+

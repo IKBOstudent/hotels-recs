@@ -9,7 +9,6 @@ plugins {
 group = "com.hotels.orders"
 version = "1.0.0"
 
-
 java {
     sourceCompatibility = JavaVersion.VERSION_17
 }

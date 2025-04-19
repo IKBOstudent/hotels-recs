@@ -9,8 +9,20 @@ management:
       exposure:
         include: health
 
+spring:
+  application:
+    name: api-gateway
+
+firebase:
+  credentials-path: /path/to/firebase-credentials.json
+
 microservice:
   hotels-orders:
-    url: ${HOTELS_ORDERS_URL:http://localhost:8081}
+    url: ${HOTELS_ORDERS_URL}
   hotels-searcher:
-    url: ${HOTELS_SEARCHER_URL:http://localhost:8082}
+    url: ${HOTELS_SEARCHER_URL}
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG

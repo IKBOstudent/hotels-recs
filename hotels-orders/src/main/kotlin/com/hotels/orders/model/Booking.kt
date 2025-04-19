@@ -1,4 +1,4 @@
-package com.hotels.orders
+package com.hotels.orders.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -17,30 +17,25 @@ data class Booking(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
-
     @Column(name = "user_id", nullable = false)
     val userId: Long,
-
     @Column(name = "hotel_id", nullable = false)
     val hotelId: Long,
-
     @Column(name = "check_in_date", nullable = false)
     val checkInDate: LocalDate,
-
     @Column(name = "check_out_date", nullable = false)
     val checkOutDate: LocalDate,
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    val status: BookingStatus,
-
+    val status: Status,
     @Column(name = "created_at")
     val createdAt: LocalDateTime = LocalDateTime.now(),
-
     @Column(name = "updated_at")
-    val updatedAt: LocalDateTime = LocalDateTime.now()
-)
-
-enum class BookingStatus {
-    INIT, PENDING, CONFIRMED, CANCELLED
+    val updatedAt: LocalDateTime = LocalDateTime.now(),
+) {
+    enum class Status {
+        PENDING,
+        CONFIRMED,
+        CANCELLED,
+    }
 }
