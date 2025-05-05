@@ -1,0 +1,22 @@
+{
+    "printWidth": 80,
+    "tabWidth": 4,
+    "singleQuote": true,
+    "semi": true,
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "overrides": [
+        {
+            "files": ["*.js", "*.jsx", "*.ts", "*.tsx"],
+            "options": {
+                "parser": "typescript"
+            }
+        },
+        {
+            "files": ["*.md", "*.json", "*.yaml", "*.yml, *rc"],
+            "options": {
+                "tabWidth": 2
+            }
+        }
+    ]
+}

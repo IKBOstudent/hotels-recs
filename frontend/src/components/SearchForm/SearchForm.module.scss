@@ -1,0 +1,14 @@
+.popupContainer {
+    min-width: 160px;
+}
+
+.popupItem {
+    cursor: pointer;
+    border-bottom: var(--g-color-line-generic) solid 1px;
+    padding: 0 12px;
+}
+
+.searchIcon {
+    margin-left: 8px;
+    margin-right: 2px;
+}
