@@ -1,5 +1,5 @@
 import { ArrowRotateRight } from '@gravity-ui/icons';
-import { Button, Container, Flex, Icon, Text } from '@gravity-ui/uikit';
+import { Button, Flex, Icon, Text } from '@gravity-ui/uikit';
 import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
@@ -35,21 +35,30 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
         if (hasError) {
             return (
-                <Container maxWidth="m">
-                    <Flex gap={4} direction="column" style={{ marginTop: 72 }}>
-                        <Text variant="header-1">
-                            Something went wrong {':('}
-                        </Text>
-                        <Text variant="subheader-3">Try again later...</Text>
-                        <Button
-                            size="l"
-                            onClick={() => window.location.reload()}
-                        >
-                            <Text>Reload page</Text>
-                            <Icon data={ArrowRotateRight} />
-                        </Button>
-                    </Flex>
-                </Container>
+                <Flex
+                    justifyContent="center"
+                    alignItems="center"
+                    direction="column"
+                    style={{
+                        paddingTop: 48,
+                        paddingBottom: 48,
+                        minHeight: '100vh',
+                        paddingLeft: 16,
+                        paddingRight: 16,
+                    }}
+                    gap={4}
+                >
+                    <Text variant="header-2">Something went wrong {':('}</Text>
+                    <Text variant="subheader-3">Try again later...</Text>
+                    <Button
+                        size="l"
+                        style={{ width: 'fit-content' }}
+                        onClick={() => window.location.reload()}
+                    >
+                        <Text>Reload page</Text>
+                        <Icon data={ArrowRotateRight} />
+                    </Button>
+                </Flex>
             );
         }
 

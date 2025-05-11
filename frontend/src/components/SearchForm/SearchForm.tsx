@@ -9,23 +9,21 @@ import {
     setSearchParams,
     updateSearchParams,
 } from '~/store/features/hotels/hotelsSearchSlice';
-import { ISearchParams } from '~/store/features/hotels/types';
+import { ISearchParamsState } from '~/store/features/hotels/types';
 import { Magnifier } from '@gravity-ui/icons';
 
 import styles from './SearchForm.module.scss';
+import debounce from 'lodash/debounce';
 
 interface FormData {
     queryString: string;
-    range: RangeValue<DateTime>;
+    datesRange: RangeValue<DateTime>;
 }
 
 export const SearchForm: React.FC = () => {
     const dispatch = useAppDispatch();
 
     const searchParams = useAppSelector(searchParamsSelector);
-    const initalRange = searchParams
-        ? { start: searchParams.checkInDate, end: searchParams.checkOutDate }
-        : undefined;
 
     const {
         control,
@@ -33,35 +31,36 @@ export const SearchForm: React.FC = () => {
         formState: { isValid },
     } = useForm<FormData>({
         shouldUnregister: false,
-        defaultValues: {
-            queryString: searchParams?.queryString,
-            range: initalRange,
+        defaultValues: searchParams || {
+            queryString: '',
+            datesRange: undefined,
         },
     });
 
-    const onSubmit = ({ queryString, range }: FormData) => {
-        console.log(queryString, range);
-
-        const newSearchParams: ISearchParams = {
+    const onSubmit = ({ queryString, datesRange }: FormData) => {
+        const newSearchParams: ISearchParamsState = {
             queryString,
-            checkInDate: range.start,
-            checkOutDate: range.end,
+            checkInTimestamp: datesRange.start.valueOf(),
+            checkOutTimestamp: datesRange.end.valueOf(),
         };
         dispatch(setSearchParams(newSearchParams));
     };
 
-    const handleChange = ({ queryString, range }: Partial<FormData>) => {
-        if (!searchParams) {
-            return;
-        }
+    const handleChange = debounce(
+        ({ queryString, datesRange }: Partial<FormData>) => {
+            if (!searchParams) {
+                return;
+            }
 
-        const updatedSearchParams: Partial<ISearchParams> = {
-            queryString,
-            checkInDate: range?.start,
-            checkOutDate: range?.end,
-        };
-        dispatch(updateSearchParams(updatedSearchParams));
-    };
+            const updatedSearchParams: Partial<ISearchParamsState> = {
+                queryString,
+                checkInTimestamp: datesRange?.start.valueOf(),
+                checkOutTimestamp: datesRange?.end.valueOf(),
+            };
+            dispatch(updateSearchParams(updatedSearchParams));
+        },
+        200,
+    );
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -71,9 +70,14 @@ export const SearchForm: React.FC = () => {
                 gap={2}
                 style={{
                     padding: 12,
-                    minWidth: searchParams ? 230 : 250,
+                    minWidth: searchParams ? 250 : 280,
                 }}
             >
+                {!searchParams && (
+                    <Text variant="header-1" style={{ alignSelf: 'center' }}>
+                        Search Hotels Anywhere
+                    </Text>
+                )}
                 <Controller
                     name="queryString"
                     control={control}
@@ -104,7 +108,7 @@ export const SearchForm: React.FC = () => {
                 />
 
                 <Controller
-                    name="range"
+                    name="datesRange"
                     control={control}
                     rules={{ required: true }}
                     render={({ field }) => (
@@ -112,8 +116,9 @@ export const SearchForm: React.FC = () => {
                             {...field}
                             onUpdate={(val) => {
                                 field.onChange(val);
-                                handleChange({ range: val ?? undefined });
+                                handleChange({ datesRange: val ?? undefined });
                             }}
+                            popupClassName={styles.calendar}
                             minValue={dateTime()}
                             size="l"
                         />

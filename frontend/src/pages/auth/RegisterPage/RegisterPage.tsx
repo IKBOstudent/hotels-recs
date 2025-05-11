@@ -14,11 +14,24 @@ export const RegisterPage: React.FC = () => {
         dispatch(signUp(email, password));
 
     return (
-        <Flex justifyContent="center">
+        <Flex
+            justifyContent="center"
+            alignItems="center"
+            style={{
+                paddingTop: 48,
+                paddingBottom: 48,
+                minHeight: '100vh',
+                paddingLeft: 16,
+                paddingRight: 16,
+            }}
+        >
             <Flex
-                style={{ paddingTop: 48, minWidth: 240, width: 320 }}
                 direction="column"
                 gap={3}
+                style={{
+                    minWidth: 240,
+                    width: 320,
+                }}
             >
                 <Text variant="header-1">Create a new account</Text>
                 <AuthForm actionText="Sign up" onSubmit={handleSignUp} />

@@ -1,74 +1,113 @@
-import { Icon, Spin, Text } from '@gravity-ui/uikit';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSearchHotelsMutation } from '~/store/features/hotels/hotelApi';
+import { Button, Flex, Icon, Spin, Text } from '@gravity-ui/uikit';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { IHotel } from '~/store/features/hotels/types';
-import HotelCard from '../HotelCard/HotelCard';
-import HotelCardSkeleton from '../HotelCardSkeleton/HotelCardSkeleton';
-import { ArrowDown } from '@gravity-ui/icons';
+import OfferCard from '../OfferCard/OfferCard';
+import OfferCardSkeleton from '../OfferCard/OfferCardSkeleton';
+import { ArrowDown, ArrowRotateRight } from '@gravity-ui/icons';
+
+import debounce from 'lodash/debounce';
 
 import styles from './Offers.module.scss';
-import { Header } from '~/components/Header/Header';
+import { useAppDispatch, useAppSelector } from '~/store/store';
+import { offersSelector } from '~/store/features/hotels/hotelsSearchSlice';
+import { searchHotels } from '~/store/features/hotels/thunk';
 
-interface HotelsScrollProps {}
+interface OffersProps {
+    // searchParams:
+    setFloatersVisible: (val: boolean) => void;
+}
 
-const HotelsScroll: React.FC<HotelsScrollProps> = () => {
-    // const [hotels, setHotels] = useState<IHotel[]>([]);
-    // const [viewedIds, setViewedIds] = useState<number[]>([]);
+const Offers: React.FC<OffersProps> = ({ setFloatersVisible }) => {
+    const dispatch = useAppDispatch();
 
-    // const [searchHotels, { isLoading }] = useSearchHotelsMutation();
+    const { data, loading, error, hasMore } = useAppSelector(offersSelector);
 
-    const { ref, inView } = useInView({
+    const { ref: loaderRef, inView: loaderInView } = useInView({
         threshold: 0.1,
     });
 
-    // const loadMoreHotels = useCallback(async () => {
-    //     if (isLoading) return;
-
-    //     try {
-    //         const hotels = await searchHotels({
-    //             queryString,
-    //             checkInDate: '',
-    //             checkOutDate: '',
-    //         }).unwrap();
-
-    //         if (hotels && hotels.length > 0) {
-    //             setHotels((prev) => [...prev, ...hotels]);
-    //             setViewedIds((prev) => [...prev, ...hotels.map((h) => h.id)]);
-    //         }
-    //     } catch (error) {
-    //         console.error('Failed to load hotels:', error);
-    //     }
-    // }, [keywords, viewedIds, isLoading, searchHotels]);
-
-    // useEffect(() => {
-    //     loadMoreHotels();
-    // }, []);
+    const containerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        if (inView) {
-            console.log('in view');
+        setFloatersVisible(true);
+
+        const onScroll = () => {
+            setFloatersVisible(false);
+        };
+
+        const onScrollEnd = () => {
+            setFloatersVisible(true);
+        };
+
+        containerRef?.current?.addEventListener('scroll', onScroll, {
+            passive: true,
+        });
+        containerRef?.current?.addEventListener('scrollend', onScrollEnd, {
+            passive: true,
+        });
+        return () => {
+            containerRef?.current?.removeEventListener('scroll', onScroll);
+            containerRef?.current?.removeEventListener(
+                'scrollend',
+                onScrollEnd,
+            );
+        };
+    }, []);
+
+    useEffect(() => {
+        if (loaderInView) {
+            console.log('skeleton in view');
+            dispatch(searchHotels());
         }
-    }, [inView]);
+    }, [loaderInView]);
+
+    const array = hasMore && !error ? [...data, undefined] : data;
 
     return (
-        <div className={styles.container}>
-            <div
-                style={{ position: 'fixed', top: 0, width: '100%', zIndex: 3 }}
-            >
-                <Header />
-            </div>
-            {[...Array(3)].map((_, index) => (
-                <div key={index}>
-                    <HotelCard />
-                    <div></div>
-                </div>
-            ))}
-            <div>
-                <HotelCardSkeleton />
-            </div>
+        <div ref={containerRef} className={styles.container}>
+            {array.map((offer) =>
+                offer ? (
+                    <div key={offer.hotel.id} className={styles.item}>
+                        <OfferCard offer={offer} />
+                    </div>
+                ) : (
+                    <div ref={loaderRef} className={styles.item}>
+                        <OfferCardSkeleton />
+                    </div>
+                ),
+            )}
+
+            {error && (
+                <Flex
+                    className={styles.item}
+                    justifyContent="center"
+                    alignItems="center"
+                    direction="column"
+                    style={{
+                        paddingTop: 48,
+                        paddingBottom: 48,
+                        minHeight: '100vh',
+                        paddingLeft: 16,
+                        paddingRight: 16,
+                    }}
+                    gap={4}
+                >
+                    <Text ellipsis variant="display-1">
+                        An error occurred!
+                    </Text>
+                    <Text variant="subheader-3">Try again later...</Text>
+                    <Button
+                        size="l"
+                        style={{ width: 'fit-content' }}
+                        onClick={() => window.location.reload()}
+                    >
+                        <Text>Reload page</Text>
+                        <Icon data={ArrowRotateRight} />
+                    </Button>
+                </Flex>
+            )}
         </div>
     );
 };
 
-export default HotelsScroll;
+export default Offers;

@@ -13,6 +13,7 @@ ol[role='list'] {
 body {
     min-height: 100vh;
     overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 a:not([class]) {

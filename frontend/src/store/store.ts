@@ -2,17 +2,15 @@ import { configureStore, ThunkAction, UnknownAction } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import user from './features/user/userSlice';
+import order from './features/order/orderSlice';
 import hotelsSearch from './features/hotels/hotelsSearchSlice';
-import { hotelsSearchApi } from './features/hotels/hotelsSearchApi';
 
 export const store = configureStore({
     reducer: {
         user,
+        order,
         hotelsSearch,
-        [hotelsSearchApi.reducerPath]: hotelsSearchApi.reducer,
     },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat([hotelsSearchApi.middleware]),
 });
 
 setupListeners(store.dispatch);

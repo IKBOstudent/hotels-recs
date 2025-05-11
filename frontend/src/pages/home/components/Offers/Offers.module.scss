@@ -4,8 +4,14 @@
 
     height: 100vh;
     overflow-y: scroll;
+    scroll-behavior: smooth;
     scroll-snap-type: y mandatory;
 }
+
 .container::-webkit-scrollbar {
     display: none;
+}
+
+.item {
+    scroll-snap-align: end;
 }

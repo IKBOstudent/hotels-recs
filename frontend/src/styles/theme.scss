@@ -2,17 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=optional');
 
 .g-root_theme_light {
-    --g-border-radius-xs: 10px;
-    --g-border-radius-s: 12px;
-    --g-border-radius-m: 14px;
-    --g-border-radius-l: 18px;
-    --g-border-radius-xl: 22px;
-
-    --g-font-family-sans: 'Inter', 'Helvetica Neue', 'Helvetica', 'Arial',
-        sans-serif;
-    --g-font-family-monospace: 'Roboto Mono', 'Menlo', 'Monaco', 'Consolas',
-        'Ubuntu Mono', 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New',
-        'Courier', monospace;
+    --g-font-family-sans:
+        'Inter', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    --g-font-family-monospace:
+        'Roboto Mono', 'Menlo', 'Monaco', 'Consolas', 'Ubuntu Mono',
+        'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', 'Courier',
+        monospace;
 
     --g-color-private-brand-50: rgba(203, 255, 92, 0.1);
     --g-color-private-brand-100: rgba(203, 255, 92, 0.15);
@@ -61,17 +56,12 @@
 }
 
 .g-root_theme_dark {
-    --g-border-radius-xs: 10px;
-    --g-border-radius-s: 12px;
-    --g-border-radius-m: 14px;
-    --g-border-radius-l: 18px;
-    --g-border-radius-xl: 22px;
-
-    --g-font-family-sans: 'Inter', 'Helvetica Neue', 'Helvetica', 'Arial',
-        sans-serif;
-    --g-font-family-monospace: 'Roboto Mono', 'Menlo', 'Monaco', 'Consolas',
-        'Ubuntu Mono', 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New',
-        'Courier', monospace;
+    --g-font-family-sans:
+        'Inter', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    --g-font-family-monospace:
+        'Roboto Mono', 'Menlo', 'Monaco', 'Consolas', 'Ubuntu Mono',
+        'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', 'Courier',
+        monospace;
 
     --g-color-private-brand-50: rgba(203, 255, 92, 0.1);
     --g-color-private-brand-100: rgba(203, 255, 92, 0.15);

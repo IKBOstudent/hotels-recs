@@ -1,0 +1,85 @@
+import { AppThunk } from '~/store/store';
+import { ISearchHotelsReq, ISearchHotelsRes, ISearchParams } from './types';
+import {
+    searchParamsSelector,
+    setOffers,
+    setOffersError,
+    setOffersLoading,
+    viewedIdsSelector,
+} from './hotelsSearchSlice';
+import { AxiosResponse } from 'axios';
+import { axiosInstance } from '~/axios';
+
+const offers = [
+    {
+        id: 1,
+        hotel: {
+            id: 125,
+            images: [
+                'https://images.unsplash.com/photo-1535827841776-24afc1e255ac?q=80&w=1635&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                'https://images.unsplash.com/photo-1573052905904-34ad8c27f0cc?q=80&w=1635&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            ],
+            name: 'Hotel Name',
+            city: 'moscow',
+            address: '14, 5hdsfhfh, 555',
+            description:
+                'asdf pwoi asdf pwoi hepsodjf\nlasdhfljkas asdf pwoi hepsodjf\nlasdhfljkashdofiuasd lorem50sdflhasdlkfipsum dolor sit amet hdofiuasd lorem50sdflhasdlkfipsum dolor sit amet hepsodjf\nlasdhfljkashdofiuasd lorem50sdflhasdlkfipsum dolor sit amet',
+            aspects: 'Nice Stay Good Classy',
+        },
+        checkInDate: '05/15/2025',
+        checkOutDate: '05/18/2025',
+        nights: 4,
+        price: 13500,
+    },
+    {
+        id: 2,
+        hotel: {
+            id: 135,
+            images: [
+                'https://images.unsplash.com/photo-1554009975-d74653b879f1?q=80&w=1827&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            ],
+            name: 'Hotel Name',
+            city: 'moscow',
+            address: '14, 5hdsfhfh, 555',
+            description:
+                'asdf pwoi hepsodjf lasdhfljkashdofiuasd\nlorem50sdflhasdlkfipsum dolor sit amet',
+            aspects: 'Nice Stay Good Classy',
+        },
+        checkInDate: '05/15/2025',
+        checkOutDate: '05/19/2025',
+        nights: 5,
+        price: 23500,
+    },
+];
+
+export const searchHotels = (): AppThunk => async (dispatch, getState) => {
+    try {
+        const state = getState();
+        const searchParams = searchParamsSelector(state);
+        if (!searchParams) {
+            return;
+        }
+        const { queryString, datesRange } = searchParams;
+        const viewedIds = viewedIdsSelector(state);
+
+        // dispatch(setOffersLoading(true));
+        // const { data } = await axiosInstance.post<
+        //     ISearchHotelsReq,
+        //     AxiosResponse<ISearchHotelsRes>
+        // >('/api/hotels/search', {
+        //     queryString,
+        //     checkInDate: datesRange.start.format('MM/DD/YYYY'),
+        //     checkOutDate: datesRange.end.format('MM/DD/YYYY'),
+        //     viewedIds,
+        // });
+        // dispatch(setOffers(data));
+        setTimeout(() => dispatch(setOffers({ offers, hasMore: true })), 2000);
+    } catch (e) {
+        let message = 'Unexpected search error';
+        if (e instanceof Error) {
+            message = e.message;
+        }
+        console.error('Search request failed:', message);
+        dispatch(setOffersError(message));
+    }
+};

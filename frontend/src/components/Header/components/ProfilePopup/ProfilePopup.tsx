@@ -1,5 +1,12 @@
-import { ArrowRightFromSquare, Person } from '@gravity-ui/icons';
-import { Button, Flex, Icon, Popup, Text } from '@gravity-ui/uikit';
+import {
+    ArrowRightFromSquare,
+    Bookmark,
+    BookOpen,
+    ChevronRight,
+    Heart,
+    Person,
+} from '@gravity-ui/icons';
+import { Button, Divider, Flex, Icon, Popup, Text } from '@gravity-ui/uikit';
 import { FC, memo, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import URLs from '~/constants/URLs';
@@ -23,10 +30,10 @@ const ProfilePopup: FC<IProfilePopupProps> = () => {
         return (
             <Button
                 view="raised"
-                size="xl"
+                size="l"
                 onClick={() => setOpen((prev) => !prev)}
             >
-                {user ? <Icon data={Person} size={24} /> : 'Login'}
+                {user ? <Icon data={Person} size={18} /> : 'Login'}
             </Button>
         );
     }, [user]);
@@ -45,51 +52,58 @@ const ProfilePopup: FC<IProfilePopupProps> = () => {
                     open={isOpen}
                     placement="bottom-end"
                     anchorElement={anchor}
+                    style={{
+                        top: 8,
+                        borderRadius: 'var(--g-border-radius-l)',
+                    }}
                     onOpenChange={(open) => setOpen(open)}
                 >
                     <Flex
                         direction="column"
-                        gap={4}
+                        // alignItems="end"
+                        gap={2}
                         style={{ padding: 16, maxWidth: 240 }}
                     >
-                        {user?.displayName && (
-                            <Flex alignItems="аlex-start" gap={4}>
-                                <Text
-                                    style={{
-                                        display: 'inline-block',
-                                        width: '50px',
-                                    }}
-                                    variant="body-2"
-                                    color="secondary"
-                                >
-                                    Name
-                                </Text>
-                                <Text ellipsis variant="body-2">
-                                    {user.displayName}
-                                </Text>
-                            </Flex>
-                        )}
                         {user?.email && (
-                            <Flex alignItems="аlex-start" gap={4}>
-                                <Text
-                                    style={{
-                                        display: 'inline-block',
-                                        width: '50px',
-                                    }}
-                                    variant="body-1"
-                                    color="secondary"
-                                >
-                                    Email
-                                </Text>
-                                <Text ellipsis variant="body-1">
-                                    {user.email}
-                                </Text>
-                            </Flex>
+                            <>
+                                <Flex alignItems="center" gap={4}>
+                                    <Text
+                                        style={{
+                                            display: 'inline-block',
+                                            minWidth: 50,
+                                        }}
+                                        variant="body-2"
+                                        color="secondary"
+                                    >
+                                        Email
+                                    </Text>
+                                    <Text ellipsis variant="body-2">
+                                        {user.email}
+                                    </Text>
+                                </Flex>
+
+                                <Button size="l">
+                                    Account <Icon data={Person} />
+                                </Button>
+                            </>
                         )}
-                        <Button view="outlined-danger" onClick={handleLogout}>
+                        <Divider orientation="horizontal" />
+                        <Button size="l" view="outlined-action">
+                            Bookings <Icon data={BookOpen} />
+                        </Button>
+                        <Divider orientation="horizontal" />
+                        <Button size="l" view="normal-contrast">
+                            Favorites <Icon data={Heart} />
+                        </Button>
+
+                        {/* <Button
+                            view="flat-danger"
+                            onClick={handleLogout}
+                            style={{ width: 'fit-content' }}
+                        >
                             <Text>Log out</Text>
                             <Icon data={ArrowRightFromSquare} />
-                        </Button>
+                        </Button> */}
                     </Flex>
                 </Popup>
             )}

@@ -18,10 +18,10 @@ const SearchPopup: FC<ISearchPopupProps> = () => {
                 {searchParams && (
                     <Button
                         view="raised"
-                        size="xl"
+                        size="l"
                         onClick={() => setOpen((prev) => !prev)}
                     >
-                        <Icon data={Magnifier} size={24} />
+                        <Icon data={Magnifier} size={18} />
                     </Button>
                 )}
             </div>
@@ -29,6 +29,10 @@ const SearchPopup: FC<ISearchPopupProps> = () => {
                 open={isOpen}
                 placement="bottom-start"
                 anchorElement={anchor}
+                style={{
+                    top: 8,
+                    borderRadius: 'var(--g-border-radius-l)',
+                }}
                 onOpenChange={(open) => setOpen(open)}
             >
                 <SearchForm />
