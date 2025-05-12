@@ -26,7 +26,7 @@ export const CollapsibleText: React.FC<ICollapsibleTextProps> = ({ text }) => {
             <Button
                 view="normal"
                 size="s"
-                style={{ marginTop: 4 }}
+                style={{ marginTop: 4, pointerEvents: 'auto' }}
                 onClick={() => setIsExpanded((value) => !value)}
             >
                 {isExpanded ? 'Hide' : 'More'}

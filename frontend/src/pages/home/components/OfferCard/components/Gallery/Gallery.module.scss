@@ -1,0 +1,35 @@
+.container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+
+    display: flex;
+    flex-direction: row;
+
+    position: absolute;
+    height: 100vh;
+    width: 100%;
+
+    background: linear-gradient(
+        transparent 20%,
+        var(--g-color-base-background) 80%
+    );
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.item {
+    scroll-snap-align: center;
+
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    z-index: -1;
+}

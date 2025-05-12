@@ -1,6 +1,9 @@
 import { ChevronLeft, ChevronRight } from '@gravity-ui/icons';
-import { Button, Icon } from '@gravity-ui/uikit';
+import { Button, Flex, Icon } from '@gravity-ui/uikit';
 import { useState } from 'react';
+import { useSwipeable } from 'react-swipeable';
+
+import styles from './Gallery.module.scss';
 
 interface GalleryProps {
     images?: string[];
@@ -14,19 +17,20 @@ export function Gallery({ images, className }: GalleryProps) {
         return null;
     }
 
+    const handlers = useSwipeable({
+        onSwipedLeft: () => console.log('swiped left'),
+        onSwipedRight: () => console.log('swiped right'),
+        swipeDuration: 100,
+        preventScrollOnSwipe: true,
+        trackMouse: true,
+    });
+
     return (
         <>
-            <div className={className}>
-                <img
-                    src={images[currentPhotoIndex]}
-                    style={{
-                        position: 'absolute',
-                        height: '100%',
-                        width: '100%',
-                        objectFit: 'fill',
-                        zIndex: -1,
-                    }}
-                />
+            <div className={styles.container} {...handlers}>
+                {images.map((src) => (
+                    <img src={src} className={styles.item} />
+                ))}
             </div>
 
             {/* <LeftGalleryButton

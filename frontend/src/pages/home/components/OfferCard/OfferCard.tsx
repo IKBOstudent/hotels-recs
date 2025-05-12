@@ -29,13 +29,26 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
                 <Flex
                     direction="column"
                     gap={4}
-                    style={{ width: '100%', padding: 12, zIndex: 2 }}
+                    style={{
+                        width: '100%',
+                        padding: 12,
+                        zIndex: 2,
+                        pointerEvents: 'none',
+                    }}
                 >
-                    <Button view="flat" size="xl" style={{ alignSelf: 'end' }}>
+                    <Button
+                        view="flat"
+                        size="xl"
+                        style={{ alignSelf: 'end', pointerEvents: 'auto' }}
+                    >
                         <Icon data={Heart} size={24} />
                     </Button>
 
-                    <Button view="flat" size="xl" style={{ alignSelf: 'end' }}>
+                    <Button
+                        view="flat"
+                        size="xl"
+                        style={{ alignSelf: 'end', pointerEvents: 'auto' }}
+                    >
                         <Icon data={Comments} size={24} />
                     </Button>
 
@@ -78,7 +91,11 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
                                 </Text>
                             </Flex>
 
-                            <Button view="action" size="xl">
+                            <Button
+                                view="action"
+                                size="xl"
+                                style={{ pointerEvents: 'auto' }}
+                            >
                                 <Text
                                     variant="subheader-2"
                                     onClick={() => setModalOpen(true)}
@@ -99,10 +116,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
                         </Flex>
                     </Flex>
                 </Flex>
-                <Gallery
-                    className={styles.imageContainer}
-                    images={offer.hotel.images}
-                />
+                <Gallery images={offer.hotel.images} />
             </Flex>
         </>
     );

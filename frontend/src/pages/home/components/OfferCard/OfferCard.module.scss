@@ -3,14 +3,3 @@
     width: 100%;
     position: relative;
 }
-
-.imageContainer {
-    position: absolute;
-    height: 100vh;
-    width: 100%;
-    overflow: hidden;
-    background: linear-gradient(
-        transparent 20%,
-        var(--g-color-base-background) 80%
-    );
-}

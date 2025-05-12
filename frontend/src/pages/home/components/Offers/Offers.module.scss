@@ -6,10 +6,12 @@
     overflow-y: scroll;
     scroll-behavior: smooth;
     scroll-snap-type: y mandatory;
-}
 
-.container::-webkit-scrollbar {
-    display: none;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .item {

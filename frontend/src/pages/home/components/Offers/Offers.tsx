@@ -65,14 +65,14 @@ const Offers: React.FC<OffersProps> = ({ setFloatersVisible }) => {
 
     return (
         <div ref={containerRef} className={styles.container}>
-            {array.map((offer) =>
-                offer ? (
-                    <div key={offer.hotel.id} className={styles.item}>
-                        <OfferCard offer={offer} />
+            {array.map((offer, index) =>
+                offer === undefined ? (
+                    <div key={index} ref={loaderRef} className={styles.item}>
+                        <OfferCardSkeleton />
                     </div>
                 ) : (
-                    <div ref={loaderRef} className={styles.item}>
-                        <OfferCardSkeleton />
+                    <div key={index} className={styles.item}>
+                        <OfferCard offer={offer} />
                     </div>
                 ),
             )}
