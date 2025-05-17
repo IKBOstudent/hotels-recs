@@ -11,18 +11,53 @@ management:
 
 spring:
   application:
-    name: api-gateway
+    name: hotels-api
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - http://localhost:3000
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            exposedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+      routes:
+        - id: service1
+#          uri: ${SERVICE1_URL}
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/searcher/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        - id: service2
+#          uri: ${SERVICE2_URL}
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+    kubernetes:
+      discovery:
+        enabled: true
+      loadbalancer:
+        enabled: true
 
 firebase:
-  credentials-path: /path/to/firebase-credentials.json
+  credentials-path: ./firebase-credentials.json
 
 microservice:
-  hotels-orders:
-    url: ${HOTELS_ORDERS_URL}
-  hotels-searcher:
-    url: ${HOTELS_SEARCHER_URL}
+  hotels-orders-url: ${HOTELS_ORDERS_URL}
+  hotels-searcher-url: ${HOTELS_SEARCHER_URL}
 
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
     org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.kubernetes: DEBUG

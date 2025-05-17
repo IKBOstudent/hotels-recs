@@ -1,4 +1,4 @@
-package org.example.com.hotels.api
+package com.hotels.api
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

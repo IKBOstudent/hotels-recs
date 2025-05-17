@@ -2,31 +2,28 @@ package com.hotels.api.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder
+import org.springframework.security.config.web.server.ServerHttpSecurity
+import org.springframework.security.web.server.SecurityWebFilterChain
 
 @Configuration
-@EnableWebSecurity
-class SecurityConfig(
-    private val firebaseAuthenticationFilter: FirebaseAuthenticationFilter,
-) {
+@EnableWebFluxSecurity
+class SecurityConfig {
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun securityFilterChain(
+        http: ServerHttpSecurity,
+        firebaseAuthFilter: FirebaseAuthFilter,
+    ): SecurityWebFilterChain {
         http
+            .formLogin { it.disable() }
+            .httpBasic { it.disable() }
             .csrf { it.disable() }
-            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .authorizeHttpRequests { auth ->
-                auth
-                    .requestMatchers("/auth/**")
+            .authorizeExchange { exchanges ->
+                exchanges
+                    .anyExchange()
                     .permitAll()
-                    .requestMatchers("/actuator/**")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated()
-            }.addFilterBefore(firebaseAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            }.addFilterAt(firebaseAuthFilter, SecurityWebFiltersOrder.AUTHENTICATION)
 
         return http.build()
     }
