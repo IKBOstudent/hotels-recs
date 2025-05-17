@@ -11,6 +11,7 @@ import styles from './Offers.module.scss';
 import { useAppDispatch, useAppSelector } from '~/store/store';
 import { offersSelector } from '~/store/features/hotels/hotelsSearchSlice';
 import { searchHotels } from '~/store/features/hotels/thunk';
+import { metrics } from '~/metrics';
 
 interface OffersProps {
     // searchParams:
@@ -20,7 +21,13 @@ interface OffersProps {
 const Offers: React.FC<OffersProps> = ({ setFloatersVisible }) => {
     const dispatch = useAppDispatch();
 
-    const { data, loading, error, hasMore } = useAppSelector(offersSelector);
+    const lastSeenOfferRef = useRef<{ id: number; timestamp: number } | null>(
+        null,
+    );
+
+    const [currentOffer, setCurrentOffer] = useState<number | null>(null);
+
+    const { data, error, hasMore } = useAppSelector(offersSelector);
 
     const { ref: loaderRef, inView: loaderInView } = useInView({
         threshold: 0.1,
@@ -61,6 +68,28 @@ const Offers: React.FC<OffersProps> = ({ setFloatersVisible }) => {
         }
     }, [loaderInView]);
 
+    useEffect(() => {
+        if (currentOffer) {
+            const currentTimestamp = Date.now();
+
+            if (lastSeenOfferRef.current) {
+                const diff =
+                    currentTimestamp - lastSeenOfferRef.current.timestamp;
+                metrics.trackEvent(
+                    'hotel_view_duration',
+                    currentOffer.toString(),
+                    {
+                        duration: diff,
+                    },
+                );
+            }
+            lastSeenOfferRef.current = {
+                id: currentOffer,
+                timestamp: currentTimestamp,
+            };
+        }
+    }, [currentOffer]);
+
     const array = hasMore && !error ? [...data, undefined] : data;
 
     return (
@@ -72,7 +101,10 @@ const Offers: React.FC<OffersProps> = ({ setFloatersVisible }) => {
                     </div>
                 ) : (
                     <div key={index} className={styles.item}>
-                        <OfferCard offer={offer} />
+                        <OfferCard
+                            offer={offer}
+                            setCurrentOffer={setCurrentOffer}
+                        />
                     </div>
                 ),
             )}

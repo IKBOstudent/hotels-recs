@@ -35,8 +35,12 @@ const hotelsSearchSlice = createSlice({
             state,
             action: PayloadAction<Partial<ISearchParamsState>>,
         ) {
-            const { checkInTimestamp, checkOutTimestamp, queryString } =
-                action.payload;
+            const {
+                checkInTimestamp,
+                checkOutTimestamp,
+                locationQuery,
+                additionalQuery,
+            } = action.payload;
 
             if (state.searchParams) {
                 state.searchParams = {
@@ -45,7 +49,10 @@ const hotelsSearchSlice = createSlice({
                     checkOutTimestamp:
                         checkOutTimestamp ??
                         state.searchParams.checkOutTimestamp,
-                    queryString: queryString ?? state.searchParams.queryString,
+                    locationQuery:
+                        locationQuery ?? state.searchParams.locationQuery,
+                    additionalQuery:
+                        additionalQuery ?? state.searchParams.additionalQuery,
                 };
             }
             console.error('trying to update null state');
@@ -53,8 +60,16 @@ const hotelsSearchSlice = createSlice({
         resetSearchParams(state) {
             state.searchParams = null;
         },
-        setOffers(state, action: PayloadAction<ISearchHotelsRes>) {
-            if (action.payload.hasMore) {
+        setOffers(
+            state,
+            action: PayloadAction<ISearchHotelsRes & { reset: boolean }>,
+        ) {
+            if (action.payload.reset) {
+                state.offers.data = action.payload.offers;
+                state.offers.viewedIds = action.payload.offers.map(
+                    (offer) => offer.hotel.id,
+                );
+            } else if (action.payload.hasMore) {
                 state.offers.data = [
                     ...state.offers.data,
                     ...action.payload.offers,
@@ -95,21 +110,24 @@ export const viewedIdsSelector = (state: RootState) =>
 
 export const searchParamsSelector = createSelector(
     [
-        (state: RootState) => state.hotelsSearch.searchParams?.queryString,
+        (state: RootState) => state.hotelsSearch.searchParams?.locationQuery,
+        (state: RootState) => state.hotelsSearch.searchParams?.additionalQuery,
         (state: RootState) => state.hotelsSearch.searchParams?.checkInTimestamp,
         (state: RootState) =>
             state.hotelsSearch.searchParams?.checkOutTimestamp,
     ],
     (
-        queryString,
+        locationQuery,
+        additionalQuery,
         checkInTimestamp,
         checkOutTimestamp,
     ): ISearchParams | undefined => {
         const start = dateTimeParse(checkInTimestamp);
         const end = dateTimeParse(checkOutTimestamp);
-        if (queryString && start && end) {
+        if (locationQuery && start && end) {
             return {
-                queryString,
+                locationQuery,
+                additionalQuery,
                 datesRange: { start, end },
             };
         }

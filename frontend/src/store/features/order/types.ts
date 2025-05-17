@@ -8,3 +8,7 @@ export interface IOrder {
 export interface ICreateOrderReq {
     offerId: number;
 }
+
+export interface ICreateOrderRes {
+    order: IOrder;
+}

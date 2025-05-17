@@ -20,9 +20,8 @@ export const CollapsibleText: React.FC<ICollapsibleTextProps> = ({ text }) => {
                     WebkitBoxOrient: 'vertical',
                     textOverflow: 'ellipsis',
                 }}
-            >
-                {text}
-            </Text>
+                dangerouslySetInnerHTML={{ __html: text }}
+            ></Text>
             <Button
                 view="normal"
                 size="s"

@@ -10,13 +10,15 @@ import {
     updateSearchParams,
 } from '~/store/features/hotels/hotelsSearchSlice';
 import { ISearchParamsState } from '~/store/features/hotels/types';
-import { Magnifier } from '@gravity-ui/icons';
+import { MapPin, Star } from '@gravity-ui/icons';
 
 import styles from './SearchForm.module.scss';
 import debounce from 'lodash/debounce';
+import { searchHotels } from '~/store/features/hotels/thunk';
 
 interface FormData {
-    queryString: string;
+    locationQuery: string;
+    additionalQuery?: string;
     datesRange: RangeValue<DateTime>;
 }
 
@@ -32,14 +34,20 @@ export const SearchForm: React.FC = () => {
     } = useForm<FormData>({
         shouldUnregister: false,
         defaultValues: searchParams || {
-            queryString: '',
+            locationQuery: '',
+            additionalQuery: '',
             datesRange: undefined,
         },
     });
 
-    const onSubmit = ({ queryString, datesRange }: FormData) => {
+    const onSubmit = ({
+        locationQuery,
+        additionalQuery,
+        datesRange,
+    }: FormData) => {
         const newSearchParams: ISearchParamsState = {
-            queryString,
+            locationQuery,
+            additionalQuery,
             checkInTimestamp: datesRange.start.valueOf(),
             checkOutTimestamp: datesRange.end.valueOf(),
         };
@@ -47,17 +55,19 @@ export const SearchForm: React.FC = () => {
     };
 
     const handleChange = debounce(
-        ({ queryString, datesRange }: Partial<FormData>) => {
+        ({ locationQuery, additionalQuery, datesRange }: Partial<FormData>) => {
             if (!searchParams) {
                 return;
             }
 
             const updatedSearchParams: Partial<ISearchParamsState> = {
-                queryString,
+                locationQuery,
+                additionalQuery,
                 checkInTimestamp: datesRange?.start.valueOf(),
                 checkOutTimestamp: datesRange?.end.valueOf(),
             };
             dispatch(updateSearchParams(updatedSearchParams));
+            dispatch(searchHotels(true));
         },
         200,
     );
@@ -78,34 +88,68 @@ export const SearchForm: React.FC = () => {
                         Search Hotels Anywhere
                     </Text>
                 )}
-                <Controller
-                    name="queryString"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                        <TextInput
-                            startContent={
-                                <Text
-                                    color="secondary"
-                                    style={{ display: 'flex' }}
-                                >
-                                    <Icon
-                                        data={Magnifier}
-                                        size={16}
-                                        className={styles.searchIcon}
-                                    />
-                                </Text>
-                            }
-                            {...field}
-                            onChange={(e) => {
-                                field.onChange(e);
-                                handleChange({ queryString: e.target.value });
-                            }}
-                            size="l"
-                            placeholder="Search"
-                        />
-                    )}
-                />
+                <Flex direction={searchParams ? 'column' : 'row'} gap={2}>
+                    <Controller
+                        name="locationQuery"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => (
+                            <TextInput
+                                startContent={
+                                    <Text
+                                        color="secondary"
+                                        style={{ display: 'flex' }}
+                                    >
+                                        <Icon
+                                            data={MapPin}
+                                            size={16}
+                                            className={styles.searchIcon}
+                                        />
+                                    </Text>
+                                }
+                                {...field}
+                                onChange={(e) => {
+                                    field.onChange(e);
+                                    handleChange({
+                                        locationQuery: e.target.value,
+                                    });
+                                }}
+                                size="l"
+                                placeholder="Location"
+                            />
+                        )}
+                    />
+
+                    <Controller
+                        name="additionalQuery"
+                        control={control}
+                        render={({ field }) => (
+                            <TextInput
+                                startContent={
+                                    <Text
+                                        color="secondary"
+                                        style={{ display: 'flex' }}
+                                    >
+                                        <Icon
+                                            data={Star}
+                                            size={16}
+                                            className={styles.searchIcon}
+                                        />
+                                    </Text>
+                                }
+                                {...field}
+                                onChange={(e) => {
+                                    field.onChange(e);
+                                    handleChange({
+                                        additionalQuery: e.target.value,
+                                    });
+                                }}
+                                size="l"
+                                placeholder="Features"
+                            />
+                        )}
+                    />
+                </Flex>
 
                 <Controller
                     name="datesRange"

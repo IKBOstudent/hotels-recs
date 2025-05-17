@@ -1,21 +1,33 @@
 import { Button, Divider, Flex, Icon, Text } from '@gravity-ui/uikit';
 import { IOffer } from '~/store/features/hotels/types';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Comments, Heart, StarFill } from '@gravity-ui/icons';
 
 import styles from './OfferCard.module.scss';
 import { CollapsibleText } from './components/CollapsibleText/CollapsibleText';
 import { Gallery } from './components/Gallery/Gallery';
 import BookPopup from './components/BookPopup/BookPopup';
+import { useInView } from 'react-intersection-observer';
 
 interface OfferCardProps {
     offer: IOffer;
+    setCurrentOffer: (id: number) => void;
 }
 
-const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
+const OfferCard: React.FC<OfferCardProps> = ({ offer, setCurrentOffer }) => {
     const [isModalOpen, setModalOpen] = useState<boolean>(false);
+    const { ref, inView } = useInView({
+        threshold: 0.1,
+    });
+
+    useEffect(() => {
+        if (inView) {
+            setCurrentOffer(offer.id);
+        }
+    }, [inView]);
+
     return (
-        <>
+        <div ref={ref}>
             <BookPopup
                 offer={offer}
                 isOpen={isModalOpen}
@@ -61,7 +73,9 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
                                     <Icon data={StarFill} size={16} />
                                 </Text>
 
-                                <Text variant="subheader-2">{4.8}</Text>
+                                <Text variant="subheader-2">
+                                    {offer.hotel.rating}
+                                </Text>
                             </Flex>
 
                             <Text variant="body-2" color="secondary">
@@ -118,7 +132,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
                 </Flex>
                 <Gallery images={offer.hotel.images} />
             </Flex>
-        </>
+        </div>
     );
 };
 

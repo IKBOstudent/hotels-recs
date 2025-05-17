@@ -1,5 +1,5 @@
 import { AppThunk } from '~/store/store';
-import { ISearchHotelsReq, ISearchHotelsRes, ISearchParams } from './types';
+import { ISearchHotelsReq, ISearchHotelsRes } from './types';
 import {
     searchParamsSelector,
     setOffers,
@@ -8,101 +8,39 @@ import {
     viewedIdsSelector,
 } from './hotelsSearchSlice';
 import { AxiosResponse } from 'axios';
-import { axiosInstance } from '~/axios';
+import axiosInstance from '~/axios';
 
-const offers = [
-    {
-        id: 1,
-        hotel: {
-            id: 125,
-            images: [
-                'https://images.unsplash.com/photo-1535827841776-24afc1e255ac?q=80&w=1635&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                'https://images.unsplash.com/photo-1573052905904-34ad8c27f0cc?q=80&w=1635&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            ],
-            name: 'Hotel Name',
-            city: 'moscow',
-            address: '14, 5hdsfhfh, 555',
-            description:
-                'asdf pwoi asdf pwoi hepsodjf\nlasdhfljkas asdf pwoi hepsodjf\nlasdhfljkashdofiuasd lorem50sdflhasdlkfipsum dolor sit amet hdofiuasd lorem50sdflhasdlkfipsum dolor sit amet hepsodjf\nlasdhfljkashdofiuasd lorem50sdflhasdlkfipsum dolor sit amet',
-            aspects: 'Nice Stay Good Classy',
-        },
-        checkInDate: '05/15/2025',
-        checkOutDate: '05/18/2025',
-        nights: 4,
-        price: 13500,
-    },
-    {
-        id: 2,
-        hotel: {
-            id: 135,
-            images: [
-                'https://images.unsplash.com/photo-1554009975-d74653b879f1?q=80&w=1827&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            ],
-            name: 'Hotel Name',
-            city: 'moscow',
-            address: '14, 5hdsfhfh, 555',
-            description:
-                'asdf pwoi hepsodjf lasdhfljkashdofiuasd\nlorem50sdflhasdlkfipsum dolor sit amet',
-            aspects: 'Nice Stay Good Classy',
-        },
-        checkInDate: '05/15/2025',
-        checkOutDate: '05/19/2025',
-        nights: 5,
-        price: 23500,
-    },
-    {
-        id: 3,
-        hotel: {
-            id: 235,
-            images: [
-                'https://images.unsplash.com/photo-1554009975-d74653b879f1?q=80&w=1827&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                'https://images.unsplash.com/photo-1535827841776-24afc1e255ac?q=80&w=1635&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                'https://images.unsplash.com/photo-1573052905904-34ad8c27f0cc?q=80&w=1635&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            ],
-            name: 'Hotel Name very loognsd gda;hklhdsflkjh slfkjahsfowiehhh ih hhhpfahip',
-            city: 'moscosdf h  ii hfdiushfuhu hdslfhlhkjasdhfkjlahsdjfjfjjjjjjjfj sjjsw',
-            address:
-                '14, 5hdsfhfh, 555 asdf sdf asdfasdfa sf asfaslgf pwoEUFGO;WIEFHLWIUEFGHA98 HSDKJLAFHASL KDJGFL IAGJsdf a',
-            description:
-                'asdf pwoi asdf as df asdf asdf asd fawelfi gasdlkfjhaskljdfhkjlsdfhljksdflkasjdfl;k ajsfl;ak jsf;l kasj f;lkasj f;laskjfashjdfl kjashdfkl jshdf lkjashf kalsjf halksj fhlkadjsfhhepsodjf lasdhfljkashdofiuasd\nlorem50sdflhasdlkfipsum dolor sit amet',
-            aspects:
-                'Nice Stay Good Classa sdf hsdflk jhaslk fjhaskl j fhalskjfhal kfhals kdfhk sfhsdkj fhs  fueihi fsuehfi s uhefkajshdf kjhdkfjh sdkjfh seiuy',
-        },
-        checkInDate: '05/15/2025',
-        checkOutDate: '05/19/2025',
-        nights: 5,
-        price: 23576769900,
-    },
-];
+export const searchHotels =
+    (reset: boolean = false): AppThunk =>
+    async (dispatch, getState) => {
+        try {
+            const state = getState();
+            const searchParams = searchParamsSelector(state);
+            if (!searchParams) {
+                return;
+            }
+            const { locationQuery, additionalQuery, datesRange } = searchParams;
+            const viewedIds = viewedIdsSelector(state);
 
-export const searchHotels = (): AppThunk => async (dispatch, getState) => {
-    try {
-        const state = getState();
-        const searchParams = searchParamsSelector(state);
-        if (!searchParams) {
-            return;
+            dispatch(setOffersLoading(true));
+            const { data } = await axiosInstance.post<
+                ISearchHotelsReq,
+                AxiosResponse<ISearchHotelsRes>
+            >('http://localhost:8081/api/search', {
+                locationQuery,
+                additionalQuery,
+                checkInDate: datesRange.start.format('YYYY-MM-DD'),
+                checkOutDate: datesRange.end.format('YYYY-MM-DD'),
+                skipHotels: viewedIds,
+            });
+            dispatch(setOffers({ ...data, reset }));
+            // setTimeout(() => dispatch(setOffers({ offers, hasMore: true })), 2000);
+        } catch (e) {
+            let message = 'Unexpected search error';
+            if (e instanceof Error) {
+                message = e.message;
+            }
+            console.error('Search request failed:', message);
+            dispatch(setOffersError(message));
         }
-        const { queryString, datesRange } = searchParams;
-        const viewedIds = viewedIdsSelector(state);
-
-        // dispatch(setOffersLoading(true));
-        // const { data } = await axiosInstance.post<
-        //     ISearchHotelsReq,
-        //     AxiosResponse<ISearchHotelsRes>
-        // >('/api/hotels/search', {
-        //     queryString,
-        //     checkInDate: datesRange.start.format('MM/DD/YYYY'),
-        //     checkOutDate: datesRange.end.format('MM/DD/YYYY'),
-        //     viewedIds,
-        // });
-        // dispatch(setOffers(data));
-        setTimeout(() => dispatch(setOffers({ offers, hasMore: true })), 2000);
-    } catch (e) {
-        let message = 'Unexpected search error';
-        if (e instanceof Error) {
-            message = e.message;
-        }
-        console.error('Search request failed:', message);
-        dispatch(setOffersError(message));
-    }
-};
+    };

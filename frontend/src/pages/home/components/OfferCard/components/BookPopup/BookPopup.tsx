@@ -15,7 +15,7 @@ import {
     useToaster,
 } from '@gravity-ui/uikit';
 import { FC, memo, useEffect, useState } from 'react';
-import { axiosInstance } from '~/axios';
+import axiosInstance from '~/axios';
 import { IOffer } from '~/store/features/hotels/types';
 import { resetOrder } from '~/store/features/order/orderSlice';
 import { createOrder } from '~/store/features/order/thunk';
@@ -130,14 +130,14 @@ const BookPopup: FC<IBookPopupProps> = ({ offer, isOpen, setOpen }) => {
                                 <DatePicker
                                     size="l"
                                     value={dateTimeParse(offer.checkInDate, {
-                                        format: 'MM/DD/YYYY',
+                                        format: 'YYYY-MM-DD',
                                     })}
                                     readOnly
                                 />
                                 <DatePicker
                                     size="l"
                                     value={dateTimeParse(offer.checkOutDate, {
-                                        format: 'MM/DD/YYYY',
+                                        format: 'YYYY-MM-DD',
                                     })}
                                     readOnly
                                 />
