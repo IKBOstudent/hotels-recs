@@ -23,6 +23,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.data:spring-data-redis")
     implementation("org.opensearch.client:opensearch-java:2.10.0")
     implementation("org.opensearch.client:opensearch-rest-client:2.19.1")
 

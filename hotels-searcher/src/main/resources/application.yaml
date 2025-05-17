@@ -10,5 +10,16 @@ management:
         include: health
 
 opensearch:
-  host: ${OPENSEARCH_HOST}
-  port: ${OPENSEARCH_PORT}
+#  host: ${OPENSEARCH_HOST}
+#  port: ${OPENSEARCH_PORT}
+  host: "158.160.56.71"
+  port: 9200
+
+redis:
+#  host: ${REDIS_HOST}
+#  port: ${REDIS_PORT}
+  host: "158.160.56.71"
+  port: 6379
+
+server:
+  port: 8081

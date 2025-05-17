@@ -1,4 +1,8 @@
 package com.hotels.searcher.dto
 
-class HotelsSearchRsp {
-}
+import com.hotels.searcher.model.Offer
+
+data class HotelsSearchRsp(
+    val offers: List<Offer>,
+    val hasMore: Boolean,
+)
